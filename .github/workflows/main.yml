@@ -7,7 +7,7 @@ on:  # Define the events that trigger the workflow
 
 jobs:  # Define jobs to run in this workflow
   run-matlab-tests:  # Job name for running MATLAB tests
-    runs-on: [windows]  # Run this job on a self-hosted runner
+    runs-on: [self-hosted]  # Run this job on a self-hosted runner
 
     steps:  # List of steps to execute in the job
       - name: Checkout repository  # Step to checkout the repository code
