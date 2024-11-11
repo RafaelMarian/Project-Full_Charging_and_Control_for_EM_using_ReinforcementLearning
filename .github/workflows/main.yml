@@ -1,0 +1,32 @@
+name: Run MATLAB Compile the Main Project  # Name of the GitHub Actions workflow
+
+on:  # Define the events that trigger the workflow
+  push:  # Trigger the workflow on push events
+    branches: [ main ]  # Only trigger on pushes to the main branch
+  workflow_dispatch:  # Allows manual triggering of the workflow from GitHub
+
+jobs:  # Define jobs to run in this workflow
+  run-matlab-tests:  # Job name for running MATLAB tests
+    runs-on: [self-hosted]  # Run this job on a self-hosted runner
+
+    steps:  # List of steps to execute in the job
+      - name: Checkout repository  # Step to checkout the repository code
+        uses: actions/checkout@v4  # Use the checkout action to pull the repository
+        with:
+          path: ActionsDemo  # Specify the directory to check out the code into
+          
+      - name: Run MATLAB Command  # Step to run a MATLAB command or script
+        uses: matlab-actions/run-command@v2  # Use the MATLAB command action
+        with:
+          command: |  # Specify the command to run in MATLAB
+            cd('C:\\GitDisertatie');  
+            load_system('DisertatieVanca.slx');  
+            simOut = sim('DisertatieVanca.slx');  
+            save('simulationResults.mat', 'simOut');  
+
+      # Upload the simulation results artifact
+      - name: Upload simulation results artifact  # Step to upload simulation results
+        uses: actions/upload-artifact@v3  # Use the upload-artifact action
+        with:
+          name: simulation-results  # Name for the artifact
+          path: ActionsDemo/simulationResults.mat  # Path to the saved results
