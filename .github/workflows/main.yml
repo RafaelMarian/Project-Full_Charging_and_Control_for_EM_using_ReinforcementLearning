@@ -26,7 +26,7 @@ jobs:  # Define jobs to run in this workflow
 
       # Upload the simulation results artifact
       - name: Upload simulation results artifact  # Step to upload simulation results
-        uses: actions/upload-artifact@v3  # Use the upload-artifact action
+        uses: actions/upload-artifact@v4  # Use the upload-artifact action
         with:
           name: simulation-results  # Name for the artifact
           path: C:\\GitDisertatie\simulationResults.mat  # Path to the saved results
