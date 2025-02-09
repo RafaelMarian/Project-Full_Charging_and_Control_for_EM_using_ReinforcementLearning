@@ -1,12 +1,12 @@
-clear;
-clc;
+clear;%clear the variables
+clc;%clear the command window
 
 % Data
-PWM_frequency 	= 1e3;             
-T_pwm           = 1/PWM_frequency; 
-Ts = T_pwm; 
-Ts_simulink     = T_pwm/2;
-Ts_speed = 10*Ts;    
+PWM_frequency 	= 1e3;%PWM motor frequency set to 1000Hz             
+T_pwm           = 1/PWM_frequency;%Period of the Frequency 
+Ts = T_pwm; %Sampling time
+Ts_simulink     = T_pwm/2;%Sampling time
+Ts_speed = 10*Ts;  %Sampling time  
 dataType = 'single';           
 
 % Simulink Model
@@ -15,20 +15,18 @@ open_system(mdl)
 
 % Create observation specifications. (Defines an 8 dimensional input space,
 % including information such as motor error, speed and reference signals.
-% (Explain more)
-numObservations = 8;
-observationInfo = rlNumericSpec([numObservations 1]);
+numObservations = 8;%Dimension of the observation space
+observationInfo = rlNumericSpec([numObservations 1]);%Observations are numeric with additonal name and descriptions
 observationInfo.Name = 'observations';
 observationInfo.Description = 'Information on error and reference signal';
 
-% Create action specifications. (Create a 2 dimensional output space,
-% likely corresponfing to the voltage references for the motor control)
-numActions = 2;
+% Create action specifications.
+numActions = 2;%defines the dimension of the action space
 actionInfo = rlNumericSpec([numActions 1]); 
 actionInfo.Name = 'vqdRef';
 
-agentblk = 'DisertatieVanca/Reinforcement Learning/RL Agent';
-env = rlSimulinkEnv(mdl,agentblk,observationInfo,actionInfo);
+agentblk = 'DisertatieVanca/Reinforcement Learning/RL Agent';%Specifies the block in Simulink
+env = rlSimulinkEnv(mdl,agentblk,observationInfo,actionInfo);%Creates an reinforced learning environment that connects Simulink with actions and observations
 
 % Create Agent
 rng(0)  % fix the random seed 
@@ -46,6 +44,7 @@ commonPath = [additionLayer(2,'Name','add')
     reluLayer('Name','relu3')
     fullyConnectedLayer(16, 'Name','fc4')
     fullyConnectedLayer(1, 'Name','CriticOutput')];
+
 criticNetwork = layerGraph();
 criticNetwork = addLayers(criticNetwork,statePath);
 criticNetwork = addLayers(criticNetwork,actionPath);
@@ -71,6 +70,7 @@ actorOptions = rlRepresentationOptions('LearnRate',1e-3,'GradientThreshold',1,'L
 actor = rlDeterministicActorRepresentation(actorNetwork,observationInfo,actionInfo,...
     'Observation',{'State'},'Action',{'tanh1'},actorOptions);
 
+%Create DDPG Agent
 Ts_agent = Ts;
 agentOptions = rlTD3AgentOptions("SampleTime",Ts_agent, ...
     "DiscountFactor", 0.995, ...
@@ -90,9 +90,9 @@ agentOptions.TargetPolicySmoothModel.VarianceDecayRate = 1e-4;
 agent = rlTD3Agent(actor,[critic1,critic2],agentOptions);
 
 %% Train Agent
-T = 5.0;
-maxepisodes = 1000;
-maxsteps = ceil(T/Ts_agent); 
+T = 5.0;%Total training durations
+maxepisodes = 1000;%Limit how many training episodes can occur
+maxsteps = ceil(T/Ts_agent); %Defines the maximum steps per episode based on sampling time
 trainingOpts = rlTrainingOptions(...
     'MaxEpisodes',maxepisodes, ...
     'MaxStepsPerEpisode',maxsteps, ...
