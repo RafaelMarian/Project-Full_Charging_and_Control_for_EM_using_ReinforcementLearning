@@ -19,7 +19,8 @@ jobs:  # Definirea joburilor
         uses: matlab-actions/run-command@v2  # Comanda Matlab pentru rulare comenzi
         with:
           command: |  #Specifica comenzile care vor fi rulate in matlab
-            cd('C:\\GitDisertatie');  
+            cd('C:\\GitDisertatie'); 
+            run('RLagent.m'); 
             load_system('DisertatieVanca.slx');  
             simOut = sim('DisertatieVanca.slx');  
             save('simulationResults.mat', 'simOut');  
