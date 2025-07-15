@@ -22,6 +22,7 @@ jobs:  # Definirea joburilor
             cd('C:\\GitDisertatie'); 
             run('RLagent.m'); 
             load_system('DisertatieVanca.slx');  
+            save_system('DisertatieVanca.slx'); 
             simOut = sim('DisertatieVanca.slx');  
             save('simulationResults.mat', 'simOut');  
 
